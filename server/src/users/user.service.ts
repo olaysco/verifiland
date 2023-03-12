@@ -30,7 +30,7 @@ export class UserService {
 
   async registerUser(createUserDto: CreateUserDto) {
     const createUser = new this.userModel(createUserDto);
-    const user = await this.getUserByUsername(createUser.fullname);
+    const user = await this.getUserByEmail(createUser.email);
     if (user) {
       throw new BadRequestException();
     }
