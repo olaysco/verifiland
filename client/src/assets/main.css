@@ -1,1 +1,7 @@
 @import "./base.scss";
+@import "./table.css";
+
+.m-h-screen {
+  height: 100vh;
+  min-height: 100vh;
+}

@@ -1,7 +1,7 @@
 <template>
   <section class="w-full bg-white">
     <div class="mx-auto max-w-7xl">
-      <div class="flex flex-col lg:flex-row">
+      <div class="flex flex-col lg:flex-row m-h-screen">
         <div
           class="relative w-full bg-cover lg:w-6/12 xl:w-7/12 bg-gradient-to-r from-white via-white to-gray-100"
         >
@@ -22,7 +22,7 @@
               </p>
               <router-link
                 to="/"
-                class="inline-block px-8 py-5 text-xl font-medium text-center text-white transition duration-200 bg-blue-600 rounded-lg hover:bg-blue-700 ease"
+                class="inline-block px-8 py-5 text-xl font-medium text-center text-white transition duration-200 bg-indigo-600 rounded-lg hover:bg-blue-700 ease"
                 data-primary="blue-600"
                 data-rounded="rounded-lg"
                 >Learn more</router-link
