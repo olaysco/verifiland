@@ -10,7 +10,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @UseGuards(AuthGuard('jwt'))
-  @Get('username')
+  @Get('')
   getUserByUsername(@Param() param) {
     return this.userService.getUserByUsername(param.username);
   }

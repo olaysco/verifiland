@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import BaseIcon from "@/components/BaseIcon.vue";
+import { useUserStore } from "@/stores/user";
 import { mdiLogout, mdiMenu } from "@mdi/js";
 import { ref } from "vue";
 
@@ -8,6 +9,8 @@ const emit = defineEmits(["menu-toggled"]);
 const menuToggled = (event: any) => {
   emit("menu-toggled", event);
 };
+
+const { logout } = useUserStore();
 </script>
 <template>
   <nav
@@ -48,13 +51,13 @@ const menuToggled = (event: any) => {
         <div
           class="block lg:flex items-center relative cursor-pointer text-indigo-600 dark:text-white dark:hover:text-slate-400 hover:text-black py-2 px-3 lg:w-16 lg:justify-center"
         >
-          <div class="flex items-center">
+          <a class="flex items-center" @click.prevent="logout">
             <span
               class="inline-flex justify-center items-center w-6 h-6 transition-colors"
             >
               <BaseIcon :path="mdiLogout" /> </span
             ><span class="px-2 transition-colors lg:hidden">Log out</span>
-          </div>
+          </a>
         </div>
       </div>
     </div>

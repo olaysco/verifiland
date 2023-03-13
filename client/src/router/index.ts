@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
+import { authGuard } from '@/middleware/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,6 +28,7 @@ const router = createRouter({
     {
       path: '/assets',
       name: 'assets',
+      beforeEnter: authGuard,
       component: () => import('../views/AssetsView.vue')
     }
   ]
