@@ -39,16 +39,24 @@
           <div
             class="flex flex-col items-start justify-end w-full pt-4 md:items-center md:w-1/3 md:flex-row md:py-0"
           >
-            <router-link
-              to="/signin"
-              class="w-full px-3 py-2 mr-0 text-gray-700 md:mr-2 lg:mr-3 md:w-auto"
-              >Sign In</router-link
-            >
-            <router-link
-              to="/signup"
-              class="inline-flex items-center w-full px-6 py-3 text-sm font-medium leading-4 text-white bg-indigo-600 md:px-3 md:w-auto md:rounded-full lg:px-5 hover:bg-indigo-500 focus:outline-none md:focus:ring-2 focus:ring-0 focus:ring-offset-2 focus:ring-indigo-600"
-              >Sign Up</router-link
-            >
+            <div v-if="user && user.fullname">
+              <router-link to="assets"
+                >Welcome,
+                <span class="capitalize">{{ user.fullname.split(" ")[0] }}</span>
+              </router-link>
+            </div>
+            <div v-else>
+              <router-link
+                to="/signin"
+                class="w-full px-3 py-2 mr-0 text-gray-700 md:mr-2 lg:mr-3 md:w-auto"
+                >Sign In</router-link
+              >
+              <router-link
+                to="/signup"
+                class="inline-flex items-center w-full px-6 py-3 text-sm font-medium leading-4 text-white bg-indigo-600 md:px-3 md:w-auto md:rounded-full lg:px-5 hover:bg-indigo-500 focus:outline-none md:focus:ring-2 focus:ring-0 focus:ring-offset-2 focus:ring-indigo-600"
+                >Sign Up</router-link
+              >
+            </div>
           </div>
         </div>
       </div>
@@ -89,13 +97,17 @@
   </nav>
 </template>
 <script lang="ts">
+import { useUserStore } from "@/stores/user";
 import { defineComponent, ref } from "vue";
 
 export default defineComponent({
   setup() {
     const showMenu = ref<boolean>(false);
 
+    const { user } = useUserStore();
+
     return {
+      user,
       showMenu,
     };
   },

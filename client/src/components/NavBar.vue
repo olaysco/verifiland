@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { storeToRefs } from "pinia";
 import BaseIcon from "@/components/BaseIcon.vue";
 import { useUserStore } from "@/stores/user";
 import { mdiLogout, mdiMenu } from "@mdi/js";
@@ -10,6 +11,7 @@ const menuToggled = (event: any) => {
   emit("menu-toggled", event);
 };
 
+const { user } = storeToRefs(useUserStore());
 const { logout } = useUserStore();
 </script>
 <template>
@@ -45,7 +47,11 @@ const { logout } = useUserStore();
                 class="rounded-full block h-auto w-full max-w-full bg-gray-100 dark:bg-slate-800"
               />
             </div>
-            <span class="px-2 transition-colors">John Doe</span>
+            <span
+              class="px-2 transition-colors capitalize text-black"
+              v-if="user && user.fullname"
+              >{{ user.fullname }}</span
+            >
           </div>
         </div>
         <div
