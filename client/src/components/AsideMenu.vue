@@ -1,5 +1,11 @@
 <script lang="ts" setup>
-import { mdiLogout, mdiClose, mdiHomeSilo, mdiHomeGroupPlus } from "@mdi/js";
+import {
+  mdiHomeSwitchOutline,
+  mdiClose,
+  mdiHomeSilo,
+  mdiHomeGroupPlus,
+  mdiHomeAccount,
+} from "@mdi/js";
 import { computed } from "vue";
 import BaseIcon from "@/components/BaseIcon.vue";
 defineProps({
@@ -24,7 +30,7 @@ const asideMobileCloseClick = (event: any) => {
     >
       <div class="flex flex-row h-14 items-center justify-between dark:bg-slate-900">
         <div class="text-center flex-1 md:text-left md:pl-6 lg:text-center xl:pl-0">
-          <b class="font-black">verifiland.</b>
+          <router-link to="/"><b class="font-black">verifiland.</b></router-link>
         </div>
         <button
           class="hidden md:inline-block lg:hidden p-3"
@@ -43,12 +49,12 @@ const asideMobileCloseClick = (event: any) => {
               v-slot="{ isExactActive }"
               class="flex cursor-pointer py-3 text-indigo-800 hover:text-black"
               ><span
-                class="inline-flex justify-center items-center w-16 h-6 flex-none font-bold text-black"
+                class="inline-flex justify-center items-center w-16 h-6 flex-none"
                 :class="[isExactActive ? 'text-black' : '']"
               >
                 <BaseIcon :path="mdiHomeSilo" size="24" /> </span
               ><span
-                class="grow text-ellipsis line-clamp-1 pr-12 font-bold text-black"
+                class="grow text-ellipsis line-clamp-1 pr-12"
                 :class="[isExactActive ? 'text-black' : '']"
                 >Assets</span
               ></router-link
@@ -66,7 +72,39 @@ const asideMobileCloseClick = (event: any) => {
               ><span
                 class="grow text-ellipsis line-clamp-1 pr-12"
                 :class="[isExactActive ? 'text-black' : '']"
-                >Register Assets</span
+                >Add Assets</span
+              ></router-link
+            >
+            <router-link
+              aria-current="page"
+              to="/transfer-assets"
+              v-slot="{ isExactActive }"
+              class="flex cursor-pointer py-3 text-indigo-800 hover:text-black"
+              ><span
+                class="inline-flex justify-center items-center w-16 h-6 flex-none"
+                :class="[isExactActive ? 'text-black' : '']"
+              >
+                <BaseIcon :path="mdiHomeSwitchOutline" size="24" /> </span
+              ><span
+                class="grow text-ellipsis line-clamp-1 pr-12"
+                :class="[isExactActive ? 'text-black' : '']"
+                >Assets Transfer</span
+              ></router-link
+            >
+            <router-link
+              aria-current="page"
+              to="/asset-owners"
+              v-slot="{ isExactActive }"
+              class="flex cursor-pointer py-3 text-indigo-800 hover:text-black"
+              ><span
+                class="inline-flex justify-center items-center w-16 h-6 flex-none"
+                :class="[isExactActive ? 'font-bold text-black' : '']"
+              >
+                <BaseIcon :path="mdiHomeAccount" size="24" /> </span
+              ><span
+                class="grow text-ellipsis line-clamp-1 pr-12"
+                :class="[isExactActive ? 'font-bold text-black' : '']"
+                >Asset Owners</span
               ></router-link
             >
           </li>
