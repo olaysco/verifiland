@@ -32,7 +32,10 @@ export class UserService {
     const createUser = new this.userModel(createUserDto);
     const user = await this.getUserByEmail(createUser.email);
     if (user) {
-      throw new BadRequestException();
+      throw new BadRequestException({
+        statusCode: 400,
+        message: 'User with the email already exists.',
+      });
     }
     createUser.password = await this.hashService.hashPassword(
       createUser.password,
