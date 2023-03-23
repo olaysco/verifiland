@@ -10,7 +10,7 @@
           </template>
         </NotificationBar>
         <h4 class="w-full text-3xl font-bold">Signin</h4>
-        <p class="text-lg text-gray-500">
+        <p class="text-sm text-gray-500">
           or, if you don't have an account
           <router-link to="signup" class="text-blue-600 underline" data-primary="blue-600"
             >sign up</router-link

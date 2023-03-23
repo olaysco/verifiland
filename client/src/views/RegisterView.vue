@@ -14,7 +14,7 @@
           </template>
         </NotificationBar>
         <h4 class="w-full text-3xl font-bold">Signup</h4>
-        <p class="text-lg text-gray-500">
+        <p class="text-sm text-gray-500">
           or, if you have an account you can
           <router-link
             to="/signin"
