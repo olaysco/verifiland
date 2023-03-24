@@ -2,7 +2,9 @@
   <DashboardContainer>
     <section class="pt-6 mb-6 flex items-center justify-between">
       <div class="flex items-center justify-start">
-        <span class="inline-flex justify-center items-center w-6 h-6 mr-2">
+        <span
+          class="inline-flex justify-center items-center w-12 h-12 rounded-full bg-white text-black dark:bg-slate-900/70 dark:text-white mr-3"
+        >
           <BaseIcon :path="mdiHomeSilo" />
         </span>
         <h1 class="text-2xl leading-tight">Assets</h1>

@@ -3,18 +3,18 @@ import axios from 'axios'
 import { defineStore } from 'pinia'
 import router from '@/router'
 
-interface USER_REGISTRATION {
+interface User {
   fullname: string
   email: string
-  password: string
-  passwordConfirm: string
+  password?: string
+  passwordConfirm?: string
 }
 
 export const useUserStore = defineStore({
   id: 'user',
   state: () => ({
-    user: null,
-    accessToken: null,
+    user: null as User | null,
+    accessToken: null as string,
     loading: false,
     error: null
   }),
@@ -27,18 +27,20 @@ export const useUserStore = defineStore({
         this.accessToken = response.data?.access_token
         await this.getProfile()
       } catch (error) {
+        console.log(error)
         this.error = error.response.data
         throw error.response.data
       } finally {
         this.loading = false
       }
     },
-    async register(data: USER_REGISTRATION) {
+    async register(data: User) {
       this.loading = true
       try {
         const response = await axios.post(`${API_URL}/auth/register`, data)
         this.user = response.data
-        await this.login(this.user.email, this.user.password)
+        console.log(response.data)
+        await this.login(this.user.email, data.password)
       } catch (error) {
         this.error = error.response.data
         throw error.response.data

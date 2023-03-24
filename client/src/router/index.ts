@@ -30,6 +30,12 @@ const router = createRouter({
       name: 'assets',
       beforeEnter: authGuard,
       component: () => import('../views/AssetsView.vue')
+    },
+    {
+      path: '/add-assets',
+      name: 'addAssets',
+      beforeEnter: authGuard,
+      component: () => import('../views/AddAssetsView.vue')
     }
   ]
 })
