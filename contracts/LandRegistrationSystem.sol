@@ -15,6 +15,7 @@ contract LandRegistrationSystem {
     mapping(uint256 => Land) public lands;
     mapping(address => bool) public isAdmin;
     mapping(uint256 => address) public transferRequests;
+    mapping(address => uint256[]) public userLandIds; // Keep track of land IDs owned by each use
     mapping(uint256 => mapping(address => bool)) public transferApprovals;
 
     event LandOwnershipTransferred(
@@ -23,6 +24,8 @@ contract LandRegistrationSystem {
         address newOwner
     );
     event LandCreated(uint256 indexed landId, address newOwner);
+
+    uint256 public totalLands;
 
     modifier onlyAdmin() {
         require(isAdmin[msg.sender], "Only admins can perform this action");
@@ -46,6 +49,11 @@ contract LandRegistrationSystem {
             current_owner: msg.sender,
             previous_owners: new address[](0)
         });
+
+        // Add the land ID to the user's list of owned land IDs
+        userLandIds[msg.sender].push(landId);
+
+        totalLands++;
 
         emit LandCreated(landId, msg.sender);
     }
@@ -80,6 +88,7 @@ contract LandRegistrationSystem {
     }
 
     function deleteLand(uint256 landId) public {
+        totalLands--;
         require(msg.sender == owner, "Only owner can delete land");
         require(lands[landId].land_id != 0, "Land with this ID does not exist");
 
@@ -161,5 +170,20 @@ contract LandRegistrationSystem {
     {
         currentOwner = lands[landId].current_owner;
         previousOwners = lands[landId].previous_owners;
+    }
+
+    function getOwnedLands() public view returns (Land[] memory) {
+        uint256 landCount = userLandIds[msg.sender].length;
+        Land[] memory ownedLands = new Land[](landCount);
+        uint256 index = 0;
+        for (uint256 i = 0; i < landCount; i++) {
+            uint256 landId = userLandIds[msg.sender][i];
+            if (lands[landId].current_owner == msg.sender) {
+                ownedLands[index] = getLand(landId);
+                index++;
+            }
+        }
+
+        return ownedLands;
     }
 }
