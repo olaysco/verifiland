@@ -9,6 +9,8 @@ contract LandRegistrationSystem {
         string ipfsHash;
         address current_owner;
         address[] previous_owners;
+        uint256 created_at;
+        uint256 approved_at;
     }
 
     address public owner;
@@ -47,7 +49,9 @@ contract LandRegistrationSystem {
             is_govt_approved: false,
             ipfsHash: ipfsHash,
             current_owner: msg.sender,
-            previous_owners: new address[](0)
+            previous_owners: new address[](0),
+            created_at: block.timestamp,
+            approved_at: 0
         });
 
         // Add the land ID to the user's list of owned land IDs
@@ -67,7 +71,9 @@ contract LandRegistrationSystem {
                 is_govt_approved: lands[landId].is_govt_approved,
                 ipfsHash: lands[landId].ipfsHash,
                 current_owner: lands[landId].current_owner,
-                previous_owners: lands[landId].previous_owners
+                previous_owners: lands[landId].previous_owners,
+                created_at: lands[landId].created_at,
+                approved_at: lands[landId].approved_at
             });
 
         // return data;
@@ -118,6 +124,7 @@ contract LandRegistrationSystem {
         );
 
         lands[_landId].is_govt_approved = true;
+        lands[_landId].approved_at = block.timestamp;
     }
 
     function createTransferRequest(uint256 landId, address newOwner) public {
