@@ -6,13 +6,15 @@ import ipfs from '@/services/ipfs'
 
 import { useUIStore } from './ui'
 import { Buffer } from 'buffer'
+import router from '@/router'
 
 export const useWeb3Store = defineStore({
   id: 'web3',
-  state: (): { web3Instance: Web3 | null; account: string; landContract: any } => ({
+  state: (): { web3Instance: Web3 | null; account: string; landContract: any; assets: any[] } => ({
     web3Instance: null,
     account: '',
-    landContract: null
+    landContract: null,
+    assets: []
   }),
   getters: {},
   actions: {
@@ -58,12 +60,44 @@ export const useWeb3Store = defineStore({
             console.log(receipt)
             useUIStore().showAlert({ type: 'success', message: 'Asset registered successfully' })
             useUIStore().hideLoader()
+            router.push('/assets')
           })
           .on('error', (error) => {
             console.log(error)
           })
       } catch (error) {
         useUIStore().hideLoader()
+        console.log(error)
+      }
+    },
+    async getOwnedLands() {
+      try {
+        this.assets = []
+        await this.getWeb3()
+        await this.getContract()
+        const ownedLands = await this.landContract.methods
+          .getOwnedLands()
+          .call({ from: this.account })
+        console.log(ownedLands)
+        if (Array.isArray(ownedLands) && ownedLands.length > 0) {
+          ownedLands.forEach(async (land) => {
+            const chunks = []
+            for await (const chunk of ipfs.cat(land['ipfsHash'])) {
+              chunks.push(chunk)
+            }
+            const details = {
+              created_at: land['created_at'] * 1000,
+              is_govt_approved: land['is_govt_approved'],
+              land_id: land['land_id'],
+              previous_owners: land['previous_owners'],
+              ...JSON.parse(Buffer.concat(chunks).toString())
+            }
+            this.assets.push(details)
+            console.log(this.assets)
+            console.log(details)
+          })
+        }
+      } catch (error) {
         console.log(error)
       }
     }

@@ -3,14 +3,14 @@
     <section class="pt-6 mb-6 flex items-center justify-between">
       <div class="flex items-center justify-start">
         <span
-          class="inline-flex justify-center items-center w-12 h-12 rounded-full bg-white text-black mr-3"
+          class="shadow inline-flex justify-center items-center w-12 h-12 rounded-full bg-white text-black mr-3"
         >
           <BaseIcon :path="mdiHomeGroupPlus" />
         </span>
         <h1 class="text-2xl leading-tight">Register a New Asset</h1>
       </div>
     </section>
-    <div class="rounded-2xl flex-col bg-white flex">
+    <div class="rounded-2xl flex-col bg-white flex shadow">
       <div class="flex-1 p-6">
         <div class="mb-6 last:mb-0">
           <label class="block font-bold mb-2">Location</label>
@@ -228,7 +228,6 @@ export default defineComponent({
       try {
         if (formIsValid()) {
           await registerLand(Object.assign({}, data.value));
-          router.push("/assets");
         }
       } catch (error) {
         showAlert({ type: "danger", message: "Error registering new asset" });
