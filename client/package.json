@@ -16,6 +16,7 @@
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "@mdi/js": "^7.1.96",
+    "@truffle/contract": "^4.6.18",
     "axios": "^1.3.4",
     "buffer": "^6.0.3",
     "flowbite": "^1.6.4",
