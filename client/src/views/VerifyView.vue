@@ -1,16 +1,20 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import MainNav from "@/components/MainNav.vue";
+import { mdiHomeSearchOutline } from "@mdi/js";
+import BaseIcon from "@/components/BaseIcon.vue";
 
 export default defineComponent({
   components: {
     MainNav,
+    BaseIcon,
   },
   setup() {
     const showMenu = ref<boolean>(false);
 
     return {
       showMenu,
+      mdiHomeSearchOutline,
     };
   },
 });
@@ -35,18 +39,19 @@ export default defineComponent({
               type="text"
               name="email"
               placeholder="Land ID"
-              class="w-full h-12 px-6 py-2 font-medium text-indigo-800 focus:outline-none"
+              class="w-full h-12 px-6 py-2 font-medium text-indigo-800 focus:outline-none rounded-l-full"
               data-primary="indigo-800"
             />
-            <span class="relative top-0 right-0 block">
+            <div class="relative top-0 right-0 block">
               <button
                 type="button"
-                class="inline-flex items-center w-32 h-12 px-8 text-base font-bold leading-6 text-white transition duration-150 ease-in-out bg-indigo-400 border border-transparent hover:bg-indigo-700 focus:outline-none active:bg-indigo-700"
+                class="inline-flex items-center w-32 h-12 flex justify-center text-base font-bold leading-6 text-white transition duration-150 ease-in-out bg-indigo-600 border border-transparent hover:bg-indigo-700 focus:outline-none active:bg-indigo-700"
                 data-primary="indigo-600"
               >
-                Search
+                <BaseIcon :path="mdiHomeSearchOutline" />
+                <span class="ml-1">Search</span>
               </button>
-            </span>
+            </div>
           </div>
           <div class="mt-8 text-sm text-gray-500" data-primary="indigo-600">
             Provide land unique ID for owner verification.
