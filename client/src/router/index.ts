@@ -36,6 +36,24 @@ const router = createRouter({
       name: 'addAssets',
       beforeEnter: authGuard,
       component: () => import('../views/AddAssetsView.vue')
+    },
+    {
+      path: '/transfer-assets',
+      name: 'transferAssets',
+      beforeEnter: authGuard,
+      component: () => import('../views/AssetTransfer.vue')
+    },
+    {
+      path: '/transfer-list',
+      name: 'transferLists',
+      beforeEnter: authGuard,
+      component: () => import('../views/AssetTransferStatus.vue')
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      beforeEnter: authGuard,
+      component: () => import('../views/SettingsView.vue')
     }
   ]
 })

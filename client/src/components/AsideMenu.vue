@@ -5,14 +5,18 @@ import {
   mdiHomeSilo,
   mdiHomeGroupPlus,
   mdiHomeAccount,
+  mdiCog,
 } from "@mdi/js";
 import { computed } from "vue";
 import BaseIcon from "@/components/BaseIcon.vue";
+import { useUserStore } from "@/stores/user";
 defineProps({
   isAsideMobileExpanded: Boolean,
   isAsideLgActive: Boolean,
 });
 const emit = defineEmits(["menu-click", "aside-mobile-close-click"]);
+
+const { isAdmin } = useUserStore();
 
 const asideMobileCloseClick = (event: any) => {
   emit("aside-mobile-close-click", event);
@@ -60,6 +64,7 @@ const asideMobileCloseClick = (event: any) => {
               ></router-link
             >
             <router-link
+              v-if="!isAdmin()"
               aria-current="page"
               to="/add-assets"
               v-slot="{ isExactActive }"
@@ -77,6 +82,23 @@ const asideMobileCloseClick = (event: any) => {
             >
             <router-link
               aria-current="page"
+              to="/transfer-list"
+              v-slot="{ isExactActive }"
+              class="flex cursor-pointer py-3 text-indigo-800 hover:text-black"
+              ><span
+                class="inline-flex justify-center items-center w-16 h-6 flex-none"
+                :class="[isExactActive ? 'font-bold text-black' : '']"
+              >
+                <BaseIcon :path="mdiHomeAccount" size="24" /> </span
+              ><span
+                class="grow text-ellipsis line-clamp-1 pr-12"
+                :class="[isExactActive ? 'font-bold text-black' : '']"
+                >Transfers</span
+              ></router-link
+            >
+            <router-link
+              v-if="!isAdmin()"
+              aria-current="page"
               to="/transfer-assets"
               v-slot="{ isExactActive }"
               class="flex cursor-pointer py-3 text-indigo-800 hover:text-black"
@@ -88,23 +110,24 @@ const asideMobileCloseClick = (event: any) => {
               ><span
                 class="grow text-ellipsis line-clamp-1 pr-12"
                 :class="[isExactActive ? 'text-black' : '']"
-                >Assets Transfer</span
+                >New Transfer</span
               ></router-link
             >
             <router-link
+              v-if="isAdmin()"
               aria-current="page"
-              to="/asset-owners"
+              to="/settings"
               v-slot="{ isExactActive }"
               class="flex cursor-pointer py-3 text-indigo-800 hover:text-black"
               ><span
                 class="inline-flex justify-center items-center w-16 h-6 flex-none"
-                :class="[isExactActive ? 'font-bold text-black' : '']"
+                :class="[isExactActive ? 'text-black' : '']"
               >
-                <BaseIcon :path="mdiHomeAccount" size="24" /> </span
+                <BaseIcon :path="mdiCog" size="24" /> </span
               ><span
                 class="grow text-ellipsis line-clamp-1 pr-12"
-                :class="[isExactActive ? 'font-bold text-black' : '']"
-                >Asset Owners</span
+                :class="[isExactActive ? 'text-black' : '']"
+                >Settings</span
               ></router-link
             >
           </li>
