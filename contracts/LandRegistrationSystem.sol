@@ -15,19 +15,19 @@ contract LandRegistrationSystem {
 
     struct TransferRequestTrack {
         uint256 created_at;
+        uint256 approved_at;
         address new_owner;
         uint256 land_id;
         bool owner_approved;
         bool govt_approved;
     }
 
-    address public owner;
+    address owner;
+    uint256[] landIds;
     mapping(uint256 => Land) public lands;
-    mapping(address => bool) public isAdmin;
-    mapping(uint256 => address) public transferRequests;
+    mapping(address => bool) isAdmin;
     mapping(address => TransferRequestTrack[]) userTransferRequests;
     mapping(address => uint256[]) public userLandIds; // Keep track of land IDs owned by each use
-    mapping(uint256 => mapping(address => bool)) public transferApprovals;
 
     event LandOwnershipTransferred(
         uint256 indexed landId,
@@ -77,8 +77,7 @@ contract LandRegistrationSystem {
 
         // Add the land ID to the user's list of owned land IDs
         userLandIds[msg.sender].push(landId);
-
-        totalLands++;
+        landIds.push(landId);
 
         emit LandCreated(landId, msg.sender);
     }
@@ -110,11 +109,15 @@ contract LandRegistrationSystem {
     }
 
     function deleteLand(uint256 landId) public {
-        totalLands--;
         require(msg.sender == owner, "Only owner can delete land");
         require(lands[landId].land_id != 0, "Land with this ID does not exist");
 
         delete lands[landId];
+
+        for (uint256 i = 0; i < landIds.length; i++) {
+            landIds[i] = landIds[landIds.length - 1];
+        }
+        landIds.pop();
     }
 
     function approveLand(uint256 _landId) public onlyAdmin {
@@ -152,6 +155,7 @@ contract LandRegistrationSystem {
                 new_owner: newOwner,
                 owner_approved: true,
                 govt_approved: false,
+                approved_at: 0,
                 created_at: block.timestamp
             })
         );
@@ -160,38 +164,39 @@ contract LandRegistrationSystem {
     function approveTransferRequest(
         uint256 landId,
         address currentOwner
-    ) public onlyAdmin {
+    ) public onlyAdmin returns (bool) {
         Land storage land = lands[landId];
         require(land.land_id == landId, "This land doesn't exist");
+        require(
+            land.is_govt_approved == true,
+            "This land ownership has not been approved"
+        );
 
         TransferRequestTrack[] memory userTransfers = userTransferRequests[
             currentOwner
         ];
         for (uint256 i = 0; i < userTransfers.length; i++) {
-            if (userTransfers[i].land_id == landId) {
-                require(
-                    userTransfers[i].land_id == landId,
-                    "There is no pending transfer request for this land"
-                );
-                require(
-                    userTransfers[i].owner_approved == true,
-                    "Current owner has not approved this transfer request"
-                );
-                require(
-                    userTransfers[i].govt_approved == false,
-                    "This transfer request has already been approved by an admin user"
-                );
-
-                userTransferRequests[msg.sender][i].govt_approved = true;
+            if (
+                userTransfers[i].land_id == landId &&
+                userTransfers[i].owner_approved == true &&
+                userTransfers[i].govt_approved == false
+            ) {
+                userTransferRequests[currentOwner][i].govt_approved = true;
+                userTransferRequests[currentOwner][i].approved_at = block
+                    .timestamp;
                 land.previous_owners.push(land.current_owner);
                 land.current_owner = userTransfers[i].new_owner;
                 emit LandOwnershipTransferred(
                     landId,
                     lands[landId].previous_owners,
-                    land.current_owner
+                    currentOwner
                 );
+
+                return true;
             }
         }
+
+        return false;
     }
 
     function getLandOwners(
@@ -220,6 +225,15 @@ contract LandRegistrationSystem {
         return ownedLands;
     }
 
+    function getAllLands() public view onlyAdmin returns (Land[] memory) {
+        Land[] memory result = new Land[](landIds.length);
+        for (uint256 i; i < landIds.length; i++) {
+            result[i] = getLand(landIds[i]);
+        }
+
+        return result;
+    }
+
     function getTransferredLands()
         public
         view
@@ -228,6 +242,14 @@ contract LandRegistrationSystem {
         TransferRequestTrack[] memory response = userTransferRequests[
             msg.sender
         ];
+
+        return response;
+    }
+
+    function getAddressTransferredLands(
+        address req
+    ) public view onlyAdmin returns (TransferRequestTrack[] memory) {
+        TransferRequestTrack[] memory response = userTransferRequests[req];
 
         return response;
     }
