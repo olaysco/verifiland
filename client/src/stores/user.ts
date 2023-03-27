@@ -27,7 +27,6 @@ export const useUserStore = defineStore({
         this.accessToken = response.data?.access_token
         await this.getProfile()
       } catch (error) {
-        console.log(error)
         this.error = error.response.data
         throw error.response.data
       } finally {
@@ -39,7 +38,6 @@ export const useUserStore = defineStore({
       try {
         const response = await axios.post(`${API_URL}/auth/register`, data)
         this.user = response.data
-        console.log(response.data)
         await this.login(this.user.email, data.password)
       } catch (error) {
         this.error = error.response.data
@@ -67,6 +65,13 @@ export const useUserStore = defineStore({
       this.accessToken = null
 
       router.push('/')
+    },
+    isAdmin() {
+      if (this.user && Array.isArray(this.user.role)) {
+        return this.user.role.includes('ADMIN')
+      }
+
+      return false
     }
   },
   persist: {
