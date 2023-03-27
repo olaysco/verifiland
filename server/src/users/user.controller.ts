@@ -1,4 +1,4 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Req, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
 import { HasRoles } from 'src/roles/has-roles.decorator';
@@ -11,8 +11,8 @@ export class UserController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get('')
-  getUserByUsername(@Param() param) {
-    return this.userService.getUserByUsername(param.username);
+  getUserByEmail(@Req() req) {
+    return this.userService.getUserByEmail(req.user.username);
   }
 
   @HasRoles(Role.ADMIN)

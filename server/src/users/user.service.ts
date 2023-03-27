@@ -13,7 +13,7 @@ export class UserService {
   ) {}
 
   async getUserByUsername(username: string) {
-    return this.userModel
+    return await this.userModel
       .findOne({
         username,
       })
@@ -21,11 +21,12 @@ export class UserService {
   }
 
   async getUserByEmail(email: string) {
-    return this.userModel
+    const user = await this.userModel
       .findOne({
         email,
       })
       .exec();
+    return user;
   }
 
   async registerUser(createUserDto: CreateUserDto) {
