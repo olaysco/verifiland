@@ -10,11 +10,11 @@
         <h1 class="text-2xl leading-tight">Assets</h1>
       </div>
     </section>
-    <div class="rounded-2xl flex-col dark:bg-slate-900/70 bg-white flex">
+    <div class="shadow rounded-2xl flex-col dark:bg-slate-900/70 bg-white flex">
       <div class="flex-1">
-        <table v-if="assets.length > 0" class="shadow">
+        <table v-if="assets.length > 0" class="shadow table">
           <thead>
-            <tr>
+            <tr class="text-xs">
               <th />
               <th>Land ID</th>
               <th>Plot coordinate</th>
@@ -49,9 +49,11 @@
             <BaseIcon :path="mdiHomeSilo" class="text-gray-300" />
             <h2 class="mt-2 mb-4 text-lg font-medium text-gray-900">No assets</h2>
             <p class="text-sm text-gray-500 mb-6">
-              You currently do not have any registered assets.
+              <span v-if="registry">There are currently no registered assets.</span>
+              <span v-else>You currently do not have any registered assets.</span>
             </p>
             <BaseButton
+              v-if="!registry"
               as="router-link"
               label="Register Asset"
               class="btn-primary"
@@ -62,24 +64,28 @@
       </div>
     </div>
 
-    <Modal :size="'xl'" v-if="isShowModal" @close="closeModal">
+    <Modal :size="'3xl'" v-if="isShowModal" @close="closeModal">
       <template #header> </template>
       <template #body>
         <table>
+          <tr v-if="registry">
+            <th>Owner Address</th>
+            <td>{{ modalAsset.current_owner }}</td>
+          </tr>
           <tr v-if="modalAsset.files.deeds">
             <th>Supporting Document (Deeds)</th>
-            <td>
+            <td class="text-right">
               <a href="#" @click.prevent="openFile(modalAsset.files.deeds)"
                 >Click to Open <BaseIcon :path="mdiDownload" />
               </a>
             </td>
           </tr>
           <tr>
-            <th>Approval Status</th>
-            <td>
+            <th>Land Registry Approval Status</th>
+            <td class="text-right">
               <span
                 :class="[
-                  'p-2 rounded text-xs',
+                  'p-2 rounded text-xs text-white',
                   !modalAsset.is_govt_approved ? 'bg-yellow-300' : 'bg-green-600',
                 ]"
                 v-text="modalAsset.is_govt_approved ? 'Approved' : 'Pending Approval'"
@@ -89,13 +95,21 @@
         </table>
       </template>
       <template #footer>
-        <div class="flex justify-end">
+        <div class="flex" :class="canApprove() ? 'justify-between' : 'justify-end'">
           <button
             @click="closeModal"
             type="button"
             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
             Close
+          </button>
+          <button
+            v-if="canApprove()"
+            @click="approve"
+            type="button"
+            class="mr-2 text-indigo-600 border-2 hover:border-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          >
+            Approve
           </button>
         </div>
       </template>
@@ -112,6 +126,7 @@ import { useWeb3Store } from "@/stores/web3";
 import { storeToRefs } from "pinia";
 import BaseButton from "@/components/BaseButton.vue";
 import { Modal } from "flowbite-vue";
+import { useUserStore } from "@/stores/user";
 export default defineComponent({
   components: {
     DashboardContainer,
@@ -124,6 +139,10 @@ export default defineComponent({
     const { assets } = storeToRefs(useWeb3Store());
     const modalAsset = ref<{ [index: string]: any }>({});
     const isShowModal = ref(false);
+    const registry = ref(false);
+    const { user, isAdmin } = useUserStore();
+    const { approveLand, getAllLands } = useWeb3Store();
+    registry.value = isAdmin();
 
     function closeModal() {
       isShowModal.value = false;
@@ -135,10 +154,18 @@ export default defineComponent({
     }
 
     async function openFile(file: any) {
-      const base64 = await fetch(file.data);
       window.open(`data:application/octet-stream;${file.data}`);
-      console.log(base64);
     }
+
+    function canApprove(): boolean {
+      return isAdmin() && !modalAsset.value.is_govt_approved;
+    }
+
+    async function approve() {
+      await approveLand(modalAsset.value.land_id);
+      await getAllLands();
+    }
+
     return {
       mdiHomeSilo,
       assets,
@@ -149,10 +176,20 @@ export default defineComponent({
       modalAsset,
       mdiDownload,
       openFile,
+      registry,
+      approve,
+      canApprove,
     };
   },
   async mounted() {
-    await useWeb3Store().getOwnedLands();
+    const getLands = async () => {
+      if (useUserStore().isAdmin()) {
+        return await useWeb3Store().getAllLands();
+      }
+      await useWeb3Store().getOwnedLands();
+    };
+
+    getLands();
   },
 });
 </script>
