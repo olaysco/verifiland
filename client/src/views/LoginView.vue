@@ -64,6 +64,7 @@ import { mdiAlertCircle } from "@mdi/js";
 import { storeToRefs } from "pinia";
 import { defineComponent, ref } from "vue";
 import { Color } from "@/stores/types";
+import { useUIStore } from "@/stores/ui";
 export default defineComponent({
   components: {
     AuthContainer,
@@ -74,19 +75,22 @@ export default defineComponent({
     const error = ref<string>("");
     const username = ref<string>("");
     const password = ref<string>("");
-    const { user, loading } = storeToRefs(useUserStore());
 
     const { login } = useUserStore();
+    const { showLoader, hideLoader, showAlert } = useUIStore();
     const loginUser = () => {
       if (username.value && password.value) {
+        showLoader();
         login(username.value, password.value)
           .then(() => {
-            //redirect to dashboad
-            //show success alert
             router.push("/assets");
+            // showAlert({ type: "success", message: "Welcome back!" });
           })
           .catch((err) => {
             error.value = err?.message;
+          })
+          .finally(() => {
+            hideLoader();
           });
       }
     };

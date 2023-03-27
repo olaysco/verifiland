@@ -185,6 +185,7 @@ import { defineComponent, ref } from "vue";
 import { useWeb3Store } from "@/stores/web3";
 import { useUIStore } from "@/stores/ui";
 import router from "@/router";
+import { useUserStore } from "@/stores/user";
 
 type UploadedFiles = {
   [index: string]: {
@@ -209,6 +210,9 @@ export default defineComponent({
     const files = ref<UploadedFiles>({});
     const { registerLand } = useWeb3Store();
     const { showAlert } = useUIStore();
+    const { user } = useUserStore();
+    data.value.fullname = user?.fullname ?? "";
+    data.value.email = user?.email ?? "";
 
     const handleUpload = (event: Event, fileName: string) => {
       const value =
