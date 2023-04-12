@@ -3,17 +3,28 @@ import { defineComponent, ref } from "vue";
 import MainNav from "@/components/MainNav.vue";
 import { mdiHomeSearchOutline } from "@mdi/js";
 import BaseIcon from "@/components/BaseIcon.vue";
+import { useVerifyLand } from "@/composables/useVerifyLand";
+import { Modal } from "flowbite-vue";
+import AssetDetail from "@/components/AssetDetail.vue";
 
 export default defineComponent({
   components: {
+    Modal,
     MainNav,
     BaseIcon,
+    AssetDetail,
   },
   setup() {
     const showMenu = ref<boolean>(false);
-
+    const { landId, verify, isShowVerifyModal, closeVerifyModal, land } = useVerifyLand();
+    console.log(land);
     return {
+      land,
+      landId,
+      verify,
       showMenu,
+      closeVerifyModal,
+      isShowVerifyModal,
       mdiHomeSearchOutline,
     };
   },
@@ -38,12 +49,14 @@ export default defineComponent({
             <input
               type="text"
               name="email"
+              v-model="landId"
               placeholder="Land ID"
               class="w-full h-12 px-6 py-2 font-medium text-indigo-800 focus:outline-none rounded-l-full"
               data-primary="indigo-800"
             />
             <div class="relative top-0 right-0 block">
               <button
+                @click="verify"
                 type="button"
                 class="inline-flex items-center w-32 h-12 flex justify-center text-base font-bold leading-6 text-white transition duration-150 ease-in-out bg-indigo-600 border border-transparent hover:bg-indigo-700 focus:outline-none active:bg-indigo-700"
                 data-primary="indigo-600"
@@ -53,12 +66,19 @@ export default defineComponent({
               </button>
             </div>
           </div>
-          <div class="mt-8 text-sm text-gray-500" data-primary="indigo-600">
+          <div class="mt-2 text-sm text-gray-500" data-primary="indigo-600">
             Provide land unique ID for owner verification.
           </div>
         </div>
       </section>
     </div>
+    <Modal :size="'3xl'" v-if="isShowVerifyModal" @close="closeVerifyModal">
+      <template #header> </template>
+      <template #body>
+        <AssetDetail :asset="land" />
+      </template>
+      <template #footer> </template>
+    </Modal>
   </section>
 </template>
 <style></style>
