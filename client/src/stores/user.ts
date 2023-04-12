@@ -74,7 +74,5 @@ export const useUserStore = defineStore({
       return false
     }
   },
-  persist: {
-    enabled: true
-  }
+  persist: true
 })
