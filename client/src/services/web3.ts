@@ -17,6 +17,7 @@ export const getWeb3 = async () => {
     provider = new Web3.providers.HttpProvider('http://localhost:9545')
   }
   const web3 = new Web3(provider)
+  await window.ethereum.request({ method: 'eth_accounts' })
 
   return { provider, web3 }
 }
